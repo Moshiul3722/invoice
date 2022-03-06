@@ -41,7 +41,7 @@ class InvoiceEmail extends Mailable implements ShouldQueue
 
         return $this->markdown('emails.invoice', ['client' => $client])
             ->subject($invoice_id)
-            ->from('gazimoshiul@gmail.com', $user->name)
+            ->from('info@gazitechbd.xyz', $user->name)
             ->replyTo($user->email, $user->name)
             ->attach($pdf, ['mime' => 'application/pdf']);
     }
