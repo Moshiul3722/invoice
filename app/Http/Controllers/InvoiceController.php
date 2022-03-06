@@ -214,7 +214,7 @@ class InvoiceController extends Controller
             'pdf'           => $pdf,
         ];
 
-        Mail::to($invoice->client->email, $invoice->client->name)->send(new InvoiceEmail($data));
+        Mail::to($invoice->client)->send(new InvoiceEmail($data));
 
         // Mail::send('emails.invoice', $data, function ($message) use ($invoice, $pdf) {
         //     $message->from(Auth::user()->email, Auth::user()->name);
