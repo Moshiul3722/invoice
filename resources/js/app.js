@@ -1,4 +1,5 @@
 require("./bootstrap");
+require("jquery-countdown");
 
 window.$ = window.jQuery = require("jquery");
 

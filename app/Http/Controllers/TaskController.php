@@ -73,6 +73,9 @@ class TaskController extends Controller
             'description' => $request->description,
             'client_id' => $request->client_id,
             'user_id' => Auth::user()->id,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'priority' => $request->priority
         ]);
 
         return redirect()->route('task.index')->with('success', 'Task Created');
@@ -144,7 +147,10 @@ class TaskController extends Controller
         return $request->validate([
             'name'  => ['required', 'max:255', 'string'],
             'price' => ['required', 'integer'],
-            'client_id' => ['required', 'max:255', 'not_in:none']
+            'client_id' => ['required', 'max:255', 'not_in:none'],
+            'start_date' => ['required', 'max:255'],
+            'end_date' => ['required', 'max:255'],
+            'priority'      => ['required', 'in:normal,medium,high']
         ]);
     }
 

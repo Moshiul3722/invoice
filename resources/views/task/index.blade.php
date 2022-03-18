@@ -129,13 +129,48 @@
                                     <td class="border p-2 text-left">
                                         <a class="font-bold text-base hover:text-purple-500"
                                             href="{{ route('task.show', $task->slug) }}">{{ $task->name }}</a>
+
+                                        @php
+                                            $days_left = Carbon\Carbon::parse($task->end_date)->diffForHumans();
+                                            if ($days_left == 1) {
+                                                $percent = 90;
+                                                $color = 'bg-red-700';
+                                            } elseif ($days_left < 3) {
+                                                $percent = 75;
+                                                $color = 'bg-red-400';
+                                            } elseif ($days_left < 5) {
+                                                $percent = 65;
+                                                $color = 'bg-red-300';
+                                            } else {
+                                                $percent = 100;
+                                                $color = 'bg-green-500';
+                                            }
+                                        @endphp
+                                        <span class="flex justify-end bottom-2 text-sm font-bold text-blue-600"
+                                            data-countdown="{{ $task->end_date }}"></span>
+                                        @if ($task->status == 'complete')
+                                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                                                <div class="bg-green-600 h-1.5 rounded-full dark:bg-gray-300"
+                                                    style="width: 100%"></div>
+                                            </div>
+                                        @else
+                                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                                                <div class="{{ $color }} h-1.5 rounded-full dark:bg-gray-300"
+                                                    style="width: {{ $percent }}%">
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+
+
                                     </td>
                                     <td class="border p-2 text-center text-sm">{{ $task->price }}</td>
                                     <td class="border text-center capitalize text-sm">{{ $task->status }}
 
                                         @if ($task->status == 'pending')
                                             <form action="{{ route('markAsComplete', $task) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure the task is Done!');">
+                                                onsubmit="return confirm(' Are you sure the task is Done!');">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit"
@@ -189,4 +224,22 @@
             </div>
         </div>
     </div>
+    @section('scripts')
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="{{ asset('js') }}/jquery.countdown.min.js"></script>
+
+        <script type="text/javascript">
+            $(function() {
+                $('[data-countdown]').each(function() {
+                    var $this = $(this),
+                        finalDate = $(this).data('countdown');
+                    $this.countdown(finalDate, function(event) {
+                        $this.html(event.strftime('%D Days %H Hours %M Minutes %S Seconds'))
+                    }).on('finish.countdown', function() {
+                        alert("Finish");
+                    });
+                });
+            });
+        </script>
+    @endsection
 </x-app-layout>

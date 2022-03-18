@@ -20,9 +20,13 @@ class CreateTasksTable extends Migration
             $table->longText('description')->nullable();
             $table->integer('price');
             $table->enum('status', ['pending', 'complete'])->default('pending');
+            $table->enum('priority', ['low', 'medium', 'high'])->default('low');
+            $table->string('start_date')->default(now()->format('Y-m-d'));
+            $table->string('end_date')->default(now()->format('Y-m-d'));
             // $table->unsignedBigInteger('client_id');
             $table->foreignId('client_id')->constrained('clients', 'id')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id');
+            $table->softDeletes();
             $table->timestamps();
 
             // $table->foreignId('client_id')->references('id')->on('clients');
