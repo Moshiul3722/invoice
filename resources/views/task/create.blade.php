@@ -86,7 +86,7 @@
                                 @enderror
                             </div>
                             <div class="flex-1 ml-2">
-                                <label for="priority" class="formLabel">End Date</label>
+                                <label for="priority" class="formLabel">Priority</label>
                                 <select name="priority" id="priority" class="formInput">
                                     <option value="none">Select Priority</option>
                                     <option value="high">High</option>

@@ -77,7 +77,6 @@
                             <div class="flex-1 ml-2">
                                 <label for="status" class="formLabel">Status</label>
                                 <select name="status" id="status" class="formInput">
-
                                     <option value="active" {{ $client->status == 'active' ? 'selected' : '' }}>Active
                                     </option>
                                     <option value="inactive {{ $client->status == 'inactive' ? 'selected' : '' }}">
@@ -105,7 +104,8 @@
                                 @error('thumbnail')
                                     <p class="text-red-700">{{ $message }}</p>
                                 @enderror
-                                <div class="w-full text-center"><img class="mx-auto w-32" src="{{ getImageUrl($client->thumbnail) }}" alt=""></div>
+                                <div class="w-full text-center"><img class="mx-auto w-32"
+                                        src="{{ getImageUrl($client->thumbnail) }}" alt=""></div>
                             </div>
                         </div>
 

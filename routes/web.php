@@ -5,6 +5,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TaskController;
 use App\Mail\InvoiceEmail;
+use App\Models\ActivityLog;
 use App\Models\Client;
 use App\Models\Task;
 use App\Models\User;
@@ -29,6 +30,7 @@ Route::prefix('/')->middleware(['auth'])->group(function () {
         // dd($user);
         return view('dashboard')->with([
             'user' => $user,
+            'activity_logs' => ActivityLog::latest()->get(),
             'pending_tasks' => $user->tasks->where('status', 'pending'),
             'due_invoices' => $user->invoices->where('status', 'unpaid'),
             'paid_invoices' => $user->invoices->where('status', 'paid'),

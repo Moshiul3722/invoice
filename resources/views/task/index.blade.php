@@ -126,40 +126,74 @@
                             @forelse ($tasks as $task)
                                 <tr>
 
-                                    <td class="border p-2 text-left">
-                                        <a class="font-bold text-base hover:text-purple-500"
+                                    <td class="border py-2 text-left px-2 relative">
+                                        <a class=" font-semibold hover:text-purple-700"
                                             href="{{ route('task.show', $task->slug) }}">{{ $task->name }}</a>
 
+
                                         @php
-                                            $days_left = Carbon\Carbon::parse($task->end_date)->diffForHumans();
-                                            if ($days_left == 1) {
-                                                $percent = 90;
-                                                $color = 'bg-red-700';
-                                            } elseif ($days_left < 3) {
-                                                $percent = 75;
-                                                $color = 'bg-red-400';
-                                            } elseif ($days_left < 5) {
-                                                $percent = 65;
-                                                $color = 'bg-red-300';
+                                            $startdate = Carbon\Carbon::createFromFormat('Y-m-d H:i:s', Carbon\Carbon::now())->setTimezone('Asia/Dhaka');
+                                            $enddate = $task->end_date;
+                                            // Time Left Calculation
+                                            if ($enddate > $startdate) {
+                                                $days = $startdate->diffInDays($enddate);
+                                                $hours = $startdate
+                                                    ->copy()
+                                                    ->addDays($days)
+                                                    ->diffInHours($enddate);
+                                                $minutes = $startdate
+                                                    ->copy()
+                                                    ->addDays($days)
+                                                    ->addHours($hours)
+                                                    ->diffInMinutes($enddate);
+                                            } else {
+                                                $days = 0;
+                                                $hours = 0;
+                                                $minutes = 0;
+                                            }
+                                            // Bar Color And Percent
+                                            if ($enddate > $startdate && $task->status == 'pending') {
+                                                if ($days == 1) {
+                                                    $percent = 95;
+                                                    $color = 'bg-red-700 ';
+                                                } elseif ($days < 3) {
+                                                    $percent = 75;
+                                                    $color = 'bg-red-400 ';
+                                                } elseif ($days < 5) {
+                                                    $percent = 50;
+                                                    $color = 'bg-red-300 ';
+                                                } else {
+                                                    $percent = 100;
+                                                    $color = 'bg-green-500';
+                                                }
                                             } else {
                                                 $percent = 100;
-                                                $color = 'bg-green-500';
+                                                $color = 'bg-red-500';
                                             }
                                         @endphp
-                                        <span class="flex justify-end bottom-2 text-sm font-bold text-blue-600"
-                                            data-countdown="{{ $task->end_date }}"></span>
+
+                                        <div class="counter-class border-t py-1 mt-2 flex justify-end space-x-2 task-{{ $task->id }}"
+                                            data-date="{{ $task->end_date }}">
+                                            @if ($enddate > $startdate && $task->status == 'pending')
+                                                <p>{{ $days != 0 ? $days . ' Days,' : '' }}
+                                                    {{ $days != 0 && $hours != 0 ? $hours . ' Hours' : '' }}
+                                                    {{ $minutes . ' Minutes' }}</p>
+                                            @else
+                                                <div class="text-sm">
+                                                    {{ $task->status == 'pending' ? 'Time Over Due!' : '' }}</div>
+                                            @endif
+
+                                        </div>
+
+
                                         @if ($task->status == 'complete')
-                                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-                                                <div class="bg-green-600 h-1.5 rounded-full dark:bg-gray-300"
-                                                    style="width: 100%"></div>
-                                            </div>
+                                            <div class="absolute h-1 w-full z-10 bg-green-600 left-0 bottom-0"></div>
                                         @else
-                                            <div class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
-                                                <div class="{{ $color }} h-1.5 rounded-full dark:bg-gray-300"
-                                                    style="width: {{ $percent }}%">
-                                                </div>
-                                            </div>
+                                            <div class="absolute h-1 z-10 left-0 bottom-0 {{ $color }}"
+                                                style="width:{{ $percent }}%;"></div>
                                         @endif
+
+                                        <div class="absolute h-1 w-full bg-slate-400 left-0 bottom-0"></div>
 
 
 
@@ -224,22 +258,5 @@
             </div>
         </div>
     </div>
-    @section('scripts')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="{{ asset('js') }}/jquery.countdown.min.js"></script>
 
-        <script type="text/javascript">
-            $(function() {
-                $('[data-countdown]').each(function() {
-                    var $this = $(this),
-                        finalDate = $(this).data('countdown');
-                    $this.countdown(finalDate, function(event) {
-                        $this.html(event.strftime('%D Days %H Hours %M Minutes %S Seconds'))
-                    }).on('finish.countdown', function() {
-                        alert("Finish");
-                    });
-                });
-            });
-        </script>
-    @endsection
 </x-app-layout>
